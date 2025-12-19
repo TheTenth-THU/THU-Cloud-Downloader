@@ -37,7 +37,7 @@ def get_share_key(url: str) -> str:
     elif url.startswith(prefix['f']):
         share_type = 'f'
     else:
-        raise ValueError('Share link of Tsinghua Cloud should start with {}'.format(prefix))
+        raise ValueError('Share link of Tsinghua Cloud should start with {}. URL {} not satisfied.'.format(prefix, url))
     share_key = url[len(prefix[share_type]):].replace('/', '')
     logging.info('Share key: {}'.format(share_key))
     logging.info('Share type: {}'.format('directory' if share_type == 'd' else 'file'))
@@ -102,7 +102,6 @@ def is_match(file_path: str, pattern: str) -> bool:
 
 
 def dfs_search_files(share_key: str, 
-                     share_type: str,
                      path: str = "/", 
                      pattern: str = None) -> list:
     """Search for files in the specified directory.
@@ -172,7 +171,7 @@ def download_d(share_key: str, filelist: list, save_dir: str) -> None:
     if os.path.exists(save_dir):
         logging.warning("Save directory already exists. Files will be overwritten.")
     total_size = sum([file["size"] for file in filelist])
-    pbar = tqdm(total=total_size, ncols=120, unit='iB', unit_scale=True, unit_divisor=1024)
+    pbar = tqdm(total=total_size, ncols=100, unit='iB', unit_scale=True, unit_divisor=1024)
     for i, file in enumerate(filelist):
         file_url = 'https://cloud.tsinghua.edu.cn/d/{}/files/?p={}&dl=1'.format(share_key, file["file_path"])
         save_path = os.path.join(save_dir, file["file_path"][1:])
@@ -196,7 +195,7 @@ def download_f(share_key: str, save_path: str, total_size: int) -> None:
     """
     if os.path.exists(save_path):
         logging.warning("Save directory already exists. Files will be overwritten.")
-    pbar = tqdm(total=total_size, ncols=120, unit='iB', unit_scale=True, unit_divisor=1024)
+    pbar = tqdm(total=total_size, ncols=100, unit='iB', unit_scale=True, unit_divisor=1024)
     file_url = f'https://cloud.tsinghua.edu.cn/f/{share_key}/?dl=1'
 
     try:
@@ -254,9 +253,13 @@ def main():
         root_dir = get_root_dir(share_key)
         save_dir = os.path.join(save_dir, name if name else root_dir)
         logging.info(f"Files will be saved into: {save_dir}")
+        rename = input("Input new name for the root dir, or press Enter to use original name:")
+        if rename:
+            save_dir = os.path.join(os.path.dirname(save_dir), rename)
+            logging.info(f"Files will be saved into: {save_dir}")
         
         key = input("Start downloading? [y/N]")
-        if key != 'y':
+        if key != 'y' and key != 'Y':
             return
         download_d(share_key, filelist, save_dir)
     
@@ -274,12 +277,18 @@ def main():
         if save_dir is None:
             save_dir = os.path.join(os.path.expanduser("~"), 'Desktop')
             assert os.path.exists(save_dir), "Desktop folder not found."
-        logging.info(f"The file will be saved as: {os.path.join(save_dir, name if name else info['fileName'])}")        
+        elif not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        logging.info(f"The file will be saved as: {os.path.join(save_dir, name if name else info['fileName'])}")
+        rename = input("Input new name for the file, or press Enter to use original name:")
+        if rename:
+            name = rename
+            logging.info(f"The file will be saved as: {os.path.join(save_dir, name)}")
         
         key = input("Start downloading? [y/N]")
-        if key != 'y':
+        if key != 'y' and key != 'Y':
             return
-        download_f(share_key, os.path.join(save_dir, name if name else info["fileName"]), total_size)
+        download_f(share_key, os.path.join(save_dir, name if name else info["fileName"]), int(info["fileSize"]))
 
     
 if __name__ == '__main__':
