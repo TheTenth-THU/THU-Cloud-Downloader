@@ -1,4 +1,7 @@
 # Tsinghua Cloud Downloader
+
+_Fork from [chenyifanthu/THU-Cloud-Downloader](https://github.com/chenyifanthu/THU-Cloud-Downloader)_
+
 清华云盘批量下载助手，适用于分享的文件 size 过大导致无法直接下载的情况，本脚本添加了更多实用的小功能：
 
 - [x] 直接下载链接中的所有文件，无打包过程，且无文件数量和大小限制
