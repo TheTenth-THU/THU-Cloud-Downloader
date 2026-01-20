@@ -264,7 +264,7 @@ def download_d(share_key: str, filelist: list, save_dir: str,
         try:
             pbar.set_description("[{}/{}]".format(
                 i + 1 if not check_hash else i + 2,     # skip .hash.txt file
-                len(filelist)
+                len(filelist) if not check_hash else len(filelist) + 1
             ))
             if download_single_file(file_url, save_path, pbar, expected_hash=expected_hash):
                 success_count += 1
@@ -417,7 +417,7 @@ def main():
             save_dir = os.path.join(os.path.dirname(save_dir), rename)
             logging.info(f"Files will be saved into: {save_dir}")
         
-        key = input("Start downloading? [y/N]")
+        key = input("Start downloading? [y/N] ")
         if key != 'y' and key != 'Y':
             return
         download_d(share_key, filelist, save_dir, check_hash=to_hash)
@@ -446,7 +446,7 @@ def main():
             name = rename
             logging.info(f"The file will be saved as: {os.path.join(save_dir, name)}")
         
-        key = input("Start downloading? [y/N]")
+        key = input("Start downloading? [y/N] ")
         if key != 'y' and key != 'Y':
             return
         download_f(share_key, os.path.join(save_dir, name if name else info["fileName"]), int(info["fileSize"]))

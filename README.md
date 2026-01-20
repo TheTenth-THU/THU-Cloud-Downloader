@@ -27,6 +27,7 @@ pip install -r requirements.txt
 |*--file*, *-f* | None | 正则匹配文件路径。缺省表示下载所有文件。 Regex to match the file path. Default: download all files.|
 |*--password*, *-p* | None | 分享链接密码（如果需要）。 Password for the share link, if needed.|
 |*--name*, *-n* | None | 自定义下载的单个文件名（针对单文件分享链接）或根目录名（针对目录分享链接）。缺省表示使用原始名称。 Custom name for the downloaded single file (for single-file share link) or the root directory (for directory share link). If not provided, the original name will be used. |
+|*--hash*| False | 启用 Hash 校验下载文件完整性（需要分享链接中包含 `.hash.txt` 文件）。Enable hash check for downloaded files (requires a `.hash.txt` file in the share link). |
 
 ### Example
 ```shell
@@ -83,23 +84,26 @@ python thu_cloud_download.py -l https://share/link -f folder/subfolder/*
 
 
 ## Output Log Example
-下载链接中的全部 `.pcd` 文件：
 ```
->>  python thu_cloud_download.py -l https://cloud.tsinghua.edu.cn/d/b9aca92417f04166acdc/ -f *.pcd
-
-2023-12-18 21:15:11,853 - INFO - Share key: b9aca92417f04166acdc
-2023-12-18 21:15:12,811 - INFO - Searching for files to be downloaded, Wait a moment...
-=======================================================
+PS> python .\thu_cloud_download.py -l https://cloud.tsinghua.edu.cn/d/d333****8446/ --hash
+2026-01-21 02:10:37,965 - INFO - Share key: d333****8446
+2026-01-21 02:10:37,965 - INFO - Share type: directory
+2026-01-21 02:10:38,080 - INFO - Connected to the share link successfully.
+2026-01-21 02:10:38,081 - INFO - Searching for files to be downloaded, Wait a moment...
+====================================================================================================
 Last Modified Time           File Size   File Path
--------------------------------------------------------
-2022-06-27T19:30:21+08:00     53324648   /cam3.pcd
-2022-06-27T19:30:28+08:00     52693930   /cam4.pcd
-2022-06-27T19:30:35+08:00     52672991   /cam5.pcd
-2022-06-27T19:30:42+08:00     52774114   /cam6.pcd
--------------------------------------------------------
-2023-12-18 21:15:14,449 - INFO - # Files: 4. Total size:  201.7 MB.
-Start downloading? [y/n]y
-2023-12-18 21:15:25,671 - INFO - Root directory name: livoxscan_20220626
-[4/4]: 100%|███████████████████████████████| 202M/202M [00:33<00:00, 6.26MiB/s]
-2023-12-18 21:15:59,479 - INFO - Download finished.
+----------------------------------------------------------------------------------------------------
+2026-01-21T01:55:53+08:00    136.00 B    /.hash.txt
+2025-01-20T23:11:56+08:00    157.89 MB   /VID_20250120_093654.mp4
+2025-01-20T23:12:00+08:00    173.88 MB   /VID_20250120_093823.mp4
+----------------------------------------------------------------------------------------------------
+2026-01-21 02:10:38,133 - INFO - Num of File(s): 3. Total size:  331.8 MB.
+Path to save the files (default: Desktop):
+2026-01-21 02:10:39,010 - INFO - Root directory name: 第二组
+2026-01-21 02:10:39,010 - INFO - Files will be saved into: E:\Files\Desktop\第二组
+Input new name for the root dir, or press Enter to use original name: 
+Start downloading? [y/N]y
+2026-01-21 02:10:41,245 - WARNING - Save directory already exists. Files will be overwritten.
+[3/3]: 100%|████████████████████████████████████████████████████| 332M/332M [00:05<00:00, 68.1MiB/s]
+2026-01-21 02:10:46,387 - INFO - Download finished. Success: 2, Hash Mismatch: 0
 ```
