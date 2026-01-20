@@ -2,3 +2,4 @@
 .vscode/*
 get-pip.py
 *.tar
+*.pdf
